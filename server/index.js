@@ -5,7 +5,7 @@ const app = express()
 
 // connect DB
 mongoose
-    .connect('mongodb+srv://admin:admin@cluster0.znghj9j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+    .connect(process.env.MONGO_URL)
     .then(() => console.log('DB is connected'))
     .catch((err) => console.log('DB error', err))
 
