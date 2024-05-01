@@ -99,5 +99,69 @@ userController.put('/updateUser/:userId', verifyToken, async(req, res) => {
 })
 
 // delete
+userController.delete('/deleteUser/:userId', verifyToken, async(req, res) => {
+    if(req.params.userId === req.user.id){
+        try {
+            await User.findByIdAndDelete(req.user.id)
+            return res.status(200).json({msg: "Successfully deleted user"})
+        } catch (err) {
+            return res.status(500).json(err.message)
+        }
+    } else {
+        return res.status(403).json({msg: "You can delete only your own profile"})
+    }
+})
+
 // follow/unfollow
+userController.put('/toggleFollow/:otherUserId', verifyToken, async(req, res) => {
+    try {
+        const currentUserId = req.user.id
+        const otherUserId = req.params.otherUserId
+
+        if(currentUserId === otherUserId){
+            throw new Error("You cannot follow yourself")
+        }
+
+        const currentUser = await User.findById(currentUserId)
+        const otherUser = await User.findById(otherUserId)
+
+        if(!currentUser.followings.includes(otherUserId)){
+            currentUser.followings.push(otherUserId)
+            otherUser.followers.push(currentUserId)
+
+            await User.findByIdAndUpdate(currentUserId, {$set: currentUser}, {new: true})
+            await User.findByIdAndUpdate(otherUserId, {$set: otherUser}, {new: true})
+            
+            return res.status(200).json({msg: "You have successfully followed the user"})
+        } else {
+            currentUser.followings = currentUser.followings.map((id) => id !== otherUserId)
+            otherUser.followers = otherUser.followers.map((id)  => id !== currentUserId)
+        
+            await User.findByIdAndUpdate(currentUserId, {$set: currentUser}, {new: true})
+            await User.findByIdAndUpdate(otherUserId, {$set: otherUser}, {new: true})
+
+            return res.status(200).json({msg: "You have succesfully ufolowed the user"})
+        }
+    } catch (err) {
+        return res.status(500).json(err.message)
+    }
+})
+
 // bookmark
+userController.put('/bookmark/:postId', verifyToken, async(req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId).populate("user", "-password")
+        if(!post){
+            return res.status(500).json({msg: "No such post"})
+        } else {
+            if(post.user.bookmarkedPosts.some((post) => post._id === req.params.postId)){
+                await User.findByIdAndUpdate(req.user.id, {$pull: {'bookmarkedPosts': post}})
+                return res.status(200).json({msg: "Successfully bookmarked the post"})
+            }
+        }
+    } catch (err){
+        return res.status(500).json(err.message)
+    }
+})
+
+module.exports = userController
