@@ -10,7 +10,7 @@ userController.get('/find/suggestedUsers', verifyToken, async(req, res) => {
     try {
         const currentUser = await User.findById(req.user.id)
         const users = await User.find({}).select('-password')
-        // if we dont follow this user and if user isnt currentuser
+        // if we dont follow this user and if user isnt current user
         let suggestedUsers = users.filter((user) => {
             return (
                 !currentUser.followings.includes(user._id)
