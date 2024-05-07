@@ -1,1 +1,1 @@
-Social Network for Decision-making Using MERN (Mongo DB, Express JS, React JS, Node JS) Stack
+Social Media App for Decision-making Using MERN (Mongo DB, Express JS, React JS, Node JS) Stack
