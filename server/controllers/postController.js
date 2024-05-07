@@ -56,7 +56,7 @@ postController.get('/find/:id', async(req, res) => {
 // create
 postController.post('/', verifyToken, async(req, res) => {
     try {
-        const userId = mongoose.Types.ObjectId(req.user.id)
+        const userId = new mongoose.Types.ObjectId(req.user.id)
         const newPost = await Post.create({...req.body, user: userId})
         
         return res.status(201).json(newPost)
@@ -109,11 +109,11 @@ postController.put('/toggleLike/:id', verifyToken, async(req, res) => {
         if(post.likes.includes(currentUserId)){
             post.likes = post.likes.filter((id) => id !== currentUserId)
             await post.save()
-            return req.status(200).json({msg: "Successfully Disliked this post"})
+            return res.status(200).json({msg: "Successfully Disliked this post"})
         } else {
             post.likes.push(currentUserId)
             await post.save()
-            return req.status(200).json({msg: "Successfully Liked this post"})
+            return res.status(200).json({msg: "Successfully Liked this post"})
         }
     } catch (err) {
         return res.status(500).json(err.message)        
