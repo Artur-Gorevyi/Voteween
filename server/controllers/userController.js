@@ -32,7 +32,7 @@ userController.get('/find/suggestedUsers', verifyToken, async(req, res) => {
 userController.get('/find/friends', verifyToken, async(req, res) => {
     try {
         const currentUser = await User.findById(req.user.id)
-        const friends = await Promise.all(currentUser.followings.map((friedId) => {
+        const friends = await Promise.all(currentUser.followings.map((friendId) => {
             return User.findById(friendId).select('-password')
         }))
 
