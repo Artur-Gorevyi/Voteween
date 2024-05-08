@@ -1,5 +1,5 @@
 import React from 'react'
-import classes from './post.module.css'
+import classes from './posts.module.css'
 
 const Posts = () => {
   return (
