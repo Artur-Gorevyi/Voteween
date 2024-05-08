@@ -37,7 +37,7 @@ commentController.post('/', verifyToken, async(req, res) => {
     }
 })
 // update a comment
-commentController.post('/:commentId', verifyToken, async(req, res) => {
+commentController.put('/:commentId', verifyToken, async(req, res) => {
     try {
         const comment = await Comment.findById(req.params.commentId)
         if(!comment){
@@ -47,12 +47,10 @@ commentController.post('/:commentId', verifyToken, async(req, res) => {
         if(comment.user.toString() === req.user.id.toString()){
             comment.commentText = req.body.commentText
             await comment.save()
-            return res.status(200).json({msg: "Comment has deleted"})
+            return res.status(200).json({comment})
         } else {
             return res.status(403).json({msg: "You can update only your own comments"})
         }
-
-        return res.status(201).json() 
     } catch (err) {
         return res.status(500).json(err.message) 
     }
@@ -80,13 +78,13 @@ commentController.put('/toggleLike/:commentId', verifyToken, async(req, res) => 
         const comment = await Comment.findById(req.params.commentId)
 
         if(!comment.likes.includes(currentUserId)){
-            comment.like.push(currentUserId)
+            comment.likes.push(currentUserId)
             await comment.save()
-            return res.status(200).json({msg: "Comment has been liked"})
+            return res.status(200).json({msg: "Comment has been liked", likes: comment.likes.length})
         } else {
             comment.likes = comment.likes.filter((id) => id !== currentUserId)
             await comment.save()
-            return res.status(200).json({msg: "Comment has been disliked"})
+            return res.status(200).json({msg: "Comment has been disliked", likes: comment.likes.length})
         }
     } catch (err) {
         return res.status(500).json(err.message) 
