@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import classes from './signup.module.css'
 import img from '../../assets/woman2.jpg'
 import { Link, useNavigate } from 'react-router-dom'
-import { register } from 'timeago.js'
 import { useDispatch } from 'react-redux'
+import { register } from '../../redux/authSlice'
 
 const Signup = () => {
   const [username, setUsername] = useState('')
@@ -28,6 +28,7 @@ const Signup = () => {
       })
       
       const data = await res.json()
+      console.log(data)
       dispatch(register(data))
       navigate('/')
     } catch (error) {
@@ -47,9 +48,9 @@ const Signup = () => {
         <div className={classes.signUpRightSide}>
           <h2 className={classes.title}>Sigh Up</h2>
           <form onSubmit={handleSignup} className={classes.signUpForm}>
-            <input type="text" placeholder='Username' />
-            <input type="email" placeholder='Email' />
-            <input type="passwrd" placeholder='Password' />
+            <input type="text" placeholder='Username' onChange={(e) => setUsername(e.target.value)}/>
+            <input type="email" placeholder='Email' onChange={(e) => setEmail(e.target.value)}/>
+            <input type="password" placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
             <button type='submit' className={classes.submitBtn}>Sign Up</button>
             <p>Already have an account? <Link to='/login'>Login</Link></p>
           </form>
