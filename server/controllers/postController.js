@@ -8,7 +8,8 @@ const mongoose = require('mongoose')
 // get user posts
 postController.get('/find/userposts/:id', async(req, res) => {
     try {
-        const posts = await Post.find({user: req.params.id})
+        const currentUser = await User.findById(req.params.id)
+        const posts = await Post.find({user: currentUser._id}).populate("user", "-password")
 
         return res.status(200).json(posts)
     } catch (err) {

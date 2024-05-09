@@ -114,7 +114,7 @@ const Post = ({ post }) => {
     }
   }
 
-
+  alert(post.user.username)
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>

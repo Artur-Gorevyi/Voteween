@@ -7,6 +7,7 @@ import man from '../../assets/man.jpg'
 import { handleFollow } from '../../redux/authSlice'
 import PostPhoto from '../postPhoto/PostPhoto'
 import classes from './profileDetail.module.css'
+import Post from 'components/post/Post'
 
 const ProfileDetail = () => {
   const [profile, setProfile] = useState('')
@@ -81,7 +82,6 @@ const ProfileDetail = () => {
     }
   }
 
-  console.log(user.bookmarkedPosts)
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
@@ -119,7 +119,7 @@ const ProfileDetail = () => {
         {(show === 'mypost' && profilePosts?.length > 0) ?
         <div className={classes.bottom}>
           {profilePosts?.map((post) => (
-            <PostPhoto post={post} key={post._id}/>
+            <Post post={post} key={post._id}/>
           ))}
         </div>
         : show === 'mypost' ? <h2>Profile has no posts</h2> : ''}
