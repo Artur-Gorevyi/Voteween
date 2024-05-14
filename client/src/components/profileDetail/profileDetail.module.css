@@ -91,10 +91,13 @@
 }
 
 .bottom{
-    margin-top: 1rem;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, auto));
-    column-gap: 2.5rem;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    grid-template-columns: 3fr 6.5fr 3fr;
 }
 
 .followBtn{

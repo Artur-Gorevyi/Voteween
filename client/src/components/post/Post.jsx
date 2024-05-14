@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { format } from 'timeago.js'
 import { Link } from 'react-router-dom'
-import woman from '../../assets/woman.jpg'
+import man from '../../assets/man.jpg'
 import { capitalizeFirstLetter } from '../../util/capitalizeFirstLetter'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
@@ -114,13 +114,13 @@ const Post = ({ post }) => {
     }
   }
 
-  alert(post.user.username)
+  
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
         <div className={classes.top}>
           <Link to={`/profileDetail/${post?.user?._id}`} className={classes.topLeft}>
-            <img src={woman} className={classes.profileUserImg} />
+            <img src={post?.user?.profileImg ? `http://localhost:5000/images/${post?.user?.profileImg}` : man} className={classes.profileUserImg} />
             <div className={classes.profileMetadata}>
               <span>{capitalizeFirstLetter(post.user.username)}</span>
               <span>{format(post.createdAt)}</span>
@@ -144,8 +144,9 @@ const Post = ({ post }) => {
         </div>
         <div className={classes.center}>
           <div className={classes.desc}>{post.desc}</div>
-          {post?.location && <div className={classes.location}>Location: {post.location}</div>}
-          <img className={classes.postImg} src={post?.photo ? `http://localhost:5000/images/${post?.photo}` : woman} />
+          <Link to={`/postDetail/${post._id}`} className={classes.postImg}>
+          <img src={post?.photo ? `http://localhost:5000/images/${post?.photo}` : man} />
+          </Link>
         </div>
         <div className={`${classes.controls} ${showComment && classes.showComment}`}>
           <div className={classes.controlsLeft}>

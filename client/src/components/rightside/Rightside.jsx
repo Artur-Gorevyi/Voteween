@@ -35,7 +35,7 @@ const Rightside = () => {
         {friends?.length > 0 ? (
           friends?.map((friend) => (
              <Link className={classes.user} to={`/profileDetail/${friend._id}`} key={friend._id}>
-              <img src={man} className={classes.profileUserImg}/>
+              <img src={friend?.profileImg ? `http://localhost:5000/images/${friend?.profileImg}` : man} className={classes.profileUserImg}/>
               <div className={classes.userData}>
                 <span>{capitalizeFirstLetter(friend.username)}</span>
               </div>

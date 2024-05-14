@@ -123,10 +123,10 @@ const ProfileDetail = () => {
           ))}
         </div>
         : show === 'mypost' ? <h2>Profile has no posts</h2> : ''}
-       {(show === 'bookmarked' && profilePosts?.length > 0) ?
+       {(show === 'bookmarked' && user?.bookmarkedPosts?.length > 0) ?
         <div className={classes.bottom}>
           {user?.bookmarkedPosts?.map((post) => (
-            <PostPhoto post={post} key={post._id}/>
+            <Post post={post} key={post._id}/>
           ))}
         </div>
         : show === 'bookmarked' ? <h2>You have no bookmarked posts</h2> : ''}
