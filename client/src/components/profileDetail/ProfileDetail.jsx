@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import man from '../../assets/man.jpg'
 import { handleFollow } from '../../redux/authSlice'
-import PostPhoto from '../postPhoto/PostPhoto'
 import classes from './profileDetail.module.css'
 import Post from 'components/post/Post'
 
@@ -113,7 +112,7 @@ const ProfileDetail = () => {
           user._id === profile?._id &&
           <div className={classes.postsOrBookmarked}>
              <button onClick={() => setShow("mypost")} className={`${show === 'mypost' && classes.active}`}>My posts</button>
-             <button onClick={() => setShow("bookmarked")} className={`${show === 'bookmarked' && classes.active}`}>Bookmarked</button>
+             <button onClick={() => setShow("liked")} className={`${show === 'liked' && classes.active}`}>Liked posts</button>
           </div>
         }
         {(show === 'mypost' && profilePosts?.length > 0) ?
@@ -123,13 +122,13 @@ const ProfileDetail = () => {
           ))}
         </div>
         : show === 'mypost' ? <h2>Profile has no posts</h2> : ''}
-       {(show === 'bookmarked' && user?.bookmarkedPosts?.length > 0) ?
+       {(show === 'liked' && user?.likedPosts?.length > 0) ?
         <div className={classes.bottom}>
-          {user?.bookmarkedPosts?.map((post) => (
+          {user?.likedPosts?.map((post) => (
             <Post post={post} key={post._id}/>
           ))}
         </div>
-        : show === 'bookmarked' ? <h2>You have no bookmarked posts</h2> : ''}
+        : show === 'liked' ? <h2>You have no liked posts</h2> : ''}
       </div>
     </div>
   )

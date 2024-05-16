@@ -32,11 +32,11 @@ export const authSlice = createSlice({
                state.user.followings.push(action.payload)
             }
         },
-        bookmarkPost(state, action){
-            if(state.user.bookmarkedPosts.some(post => post._id === action.payload._id)){
-                state.user.bookmarkedPosts = state.user.bookmarkedPosts.filter((post) => post._id !== action.payload._id)
+        likePost(state, action){
+            if(state.user.likedPosts.some(post => post._id === action.payload._id)){
+                state.user.likedPosts = state.user.likedPosts.filter((post) => post._id !== action.payload._id)
             } else {
-                state.user.bookmarkedPosts.push(action.payload)
+                state.user.likedPosts.push(action.payload)
             }
         },
         updateUser(state, action){
@@ -45,6 +45,6 @@ export const authSlice = createSlice({
     }
 })
 
-export const {login, register, logout, handleFollow, bookmarkPost, updateUser} = authSlice.actions
+export const {login, register, logout, handleFollow, likePost, updateUser} = authSlice.actions
 
 export default authSlice.reducer

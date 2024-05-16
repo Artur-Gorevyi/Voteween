@@ -139,19 +139,21 @@ userController.put('/toggleFollow/:otherUserId', verifyToken, async(req, res) =>
         return res.status(500).json(error.message) 
     }
 })
-// bookmark
-userController.put('/bookmark/:postId', verifyToken, async(req, res) => {
+// like
+userController.put('/like/:postId', verifyToken, async(req, res) => {
    try {
     const post = await Post.findById(req.params.postId).populate("user", '-password')
+    const currentUser = await User.findById(req.user.id)
+
     if(!post){
         return res.status(500).json({msg: 'No such post'})
     } else {
-        if(post.user.bookmarkedPosts.some((post) => post._id === req.params.postId)){
-            await User.findByIdAndUpdate(req.user.id, {$pull: {'bookmarkedPosts': post}})
-            return res.status(200).json({msg: "Successfully unbookmarked the post"})
+        if(post.user.likedPosts.some((post) => post._id == req.params.postId) || currentUser.likedPosts.some((post) => post._id == req.params.postId)){
+            await User.findByIdAndUpdate(req.user.id, {$pull: {'likedPosts': post}})
+            return res.status(200).json({msg: "Successfully unliked the post", post: post._id, rest: req.params.postId})
         } else {
-            await User.findByIdAndUpdate(req.user.id, {$addToSet: {'bookmarkedPosts': post} })
-            return res.status(200).json({msg: "Successfully boomkarked the post"})
+            await User.findByIdAndUpdate(req.user.id, {$addToSet: {'likedPosts': post} })
+            return res.status(200).json({msg: "Successfully liked the post", post: post._id, rest: req.params.postId})
         }
     }
    } catch (error) {

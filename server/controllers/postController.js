@@ -102,7 +102,7 @@ postController.delete('/:id', verifyToken, async(req, res) => {
 })
 
 // like
-postController.put('/toggleLike/:id', verifyToken, async(req, res) => {
+postController.put('/like/:id', verifyToken, async(req, res) => {
     try {
         const currentUserId = req.user.id
         const post = await Post.findById(req.params.id)

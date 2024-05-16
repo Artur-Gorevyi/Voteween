@@ -9,19 +9,17 @@ import { capitalizeFirstLetter } from '../../util/capitalizeFirstLetter'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { BiMessageRounded } from 'react-icons/bi'
-import { BsBookmarkFill, BsBookmark } from 'react-icons/bs'
 import classes from './post.module.css'
 import Comment from '../comment/Comment'
-import { bookmarkPost } from '../../redux/authSlice'
+import { likePost } from '../../redux/authSlice'
 
 const Post = ({ post }) => {
   const { token, user } = useSelector((state) => state.auth)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
   const [isCommentEmpty, setIsCommentEmpty] = useState(false)
-  const [isLiked, setIsLiked] = useState(post.likes.includes(user._id))
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(user?.bookmarkedPosts?.some(bookmarkedPost => bookmarkedPost._id === post._id))
+  const [isLiked, setIsLiked] = useState(user?.likedPosts?.some(likedPost => likedPost._id === post._id))
   const [showComment, setShowComment] = useState(false)
   const dispatch = useDispatch()
 
@@ -59,28 +57,14 @@ const Post = ({ post }) => {
 
   const handleLikePost = async () => {
     try {
-      await fetch(`http://localhost:5000/post/toggleLike/${post._id}`, {
+      await fetch(`http://localhost:5000/user/like/${post._id}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         },
         method: "PUT"
       })
+      dispatch(likePost(post))
       setIsLiked(prev => !prev)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const handleBookmark = async () => {
-    try {
-      await fetch(`http://localhost:5000/user/bookmark/${post._id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
-        method: "PUT"
-      })
-      dispatch(bookmarkPost(post))
-      setIsBookmarked(prev => !prev)
     } catch (error) {
       console.error(error)
     }
@@ -156,13 +140,6 @@ const Post = ({ post }) => {
                 : <AiOutlineHeart onClick={handleLikePost} />
             }
             <BiMessageRounded onClick={() => setShowComment(prev => !prev)} />
-          </div>
-          <div className={classes.controlsRight} onClick={handleBookmark}>
-            {
-              isBookmarked
-                ? <BsBookmarkFill />
-                : <BsBookmark />
-            }
           </div>
         </div>
         {
