@@ -102,23 +102,28 @@ postController.delete('/:id', verifyToken, async(req, res) => {
 })
 
 // like
-postController.put('/like/:id', verifyToken, async(req, res) => {
+postController.put('/like/:id', verifyToken, async (req, res) => {
     try {
-        const currentUserId = req.user.id
-        const post = await Post.findById(req.params.id)
+        const post = await Post.findById(req.params.id);
+        const user = await User.findById(req.user.id);
 
-        if(post.likes.includes(currentUserId)){
-            post.likes = post.likes.filter((id) => id !== currentUserId)
-            await post.save()
-            return res.status(200).json({msg: "Successfully Disliked this post"})
+        if (!post) {
+            return res.status(404).json({ msg: 'No such post' });
         } else {
-            post.likes.push(currentUserId)
-            await post.save()
-            return res.status(200).json({msg: "Successfully Liked this post"})
+            if (post.likes.includes(user._id)) {
+                await Post.findByIdAndUpdate(post._id, { $pull: { 'likes': user._id } });
+                await User.findByIdAndUpdate(user._id, { $pull: { 'likedPosts': post._id } });
+                return res.status(200).json({msg: "Successfully Disliked this post"});
+            } else {
+                await Post.findByIdAndUpdate(post._id, { $addToSet: { 'likes': user._id } });
+                await User.findByIdAndUpdate(user._id, { $addToSet: { 'likedPosts': post._id } });
+                return res.status(200).json({msg: "Successfully Liked this post"});
+            }
         }
     } catch (err) {
-        return res.status(500).json(err.message)        
+        return res.status(500).json(err.message);
     }
-})
+});
+
 
 module.exports = postController

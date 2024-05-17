@@ -33,7 +33,8 @@ const UserSchema = new mongoose.Schema({
         default: ""
     },
     likedPosts: {
-        type: Array,
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Post",
         default: []
     }
 }, {timestamps: true})

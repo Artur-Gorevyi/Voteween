@@ -139,26 +139,5 @@ userController.put('/toggleFollow/:otherUserId', verifyToken, async(req, res) =>
         return res.status(500).json(error.message) 
     }
 })
-// like
-userController.put('/like/:postId', verifyToken, async(req, res) => {
-   try {
-    const post = await Post.findById(req.params.postId).populate("user", '-password')
-    const currentUser = await User.findById(req.user.id)
-
-    if(!post){
-        return res.status(500).json({msg: 'No such post'})
-    } else {
-        if(post.user.likedPosts.some((post) => post._id == req.params.postId) || currentUser.likedPosts.some((post) => post._id == req.params.postId)){
-            await User.findByIdAndUpdate(req.user.id, {$pull: {'likedPosts': post}})
-            return res.status(200).json({msg: "Successfully unliked the post", post: post._id, rest: req.params.postId})
-        } else {
-            await User.findByIdAndUpdate(req.user.id, {$addToSet: {'likedPosts': post} })
-            return res.status(200).json({msg: "Successfully liked the post", post: post._id, rest: req.params.postId})
-        }
-    }
-   } catch (error) {
-      return res.status(500).json(error.message) 
-   }
-})
 
 module.exports = userController

@@ -57,7 +57,7 @@ const Post = ({ post }) => {
 
   const handleLikePost = async () => {
     try {
-      await fetch(`http://localhost:5000/user/like/${post._id}`, {
+      await fetch(`http://localhost:5000/post/like/${post._id}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         },
