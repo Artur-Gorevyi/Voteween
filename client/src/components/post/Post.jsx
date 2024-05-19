@@ -14,7 +14,7 @@ import Comment from '../comment/Comment'
 import { likePost } from '../../redux/authSlice'
 
 const Post = ({ post }) => {
-  const { token, user } = useSelector((state) => state.auth)
+  const { user, token } = useSelector((state) => state.auth)
   const [comments, setComments] = useState([])
   const [commentText, setCommentText] = useState('')
   const [isCommentEmpty, setIsCommentEmpty] = useState(false)
@@ -31,8 +31,6 @@ const Post = ({ post }) => {
     const initialLikedPhotoIndex = post.likes[user._id];
     setLikedPhotoIndex(initialLikedPhotoIndex);
   }, [post, user._id]);
-
-  console.log(post.likes)
 
   useEffect(() => {
     const likesArray = Object.values(post.likes);
@@ -76,29 +74,48 @@ const Post = ({ post }) => {
 
   const handleLikePost = async(photoIndex) => {
     try {
-      await fetch(`http://localhost:5000/post/like/${post._id}/${photoIndex}`, {
+      const res = await fetch(`http://localhost:5000/post/like/${post._id}/${photoIndex}`, {
         headers: {
           "Authorization": `Bearer ${token}`
           
         },
         method: "PUT"
       })
-      if (likedPhotoIndex === photoIndex) {
-        setLikedPhotoIndex(null);
-        if (photoIndex === 0) {
-          setFirstPhotoLikes(firstPhotoLikes - 1);
-        } else {
-          setSecondPhotoLikes(secondPhotoLikes - 1);
+      const updatedPost = await res.json();
+      
+      if (likedPhotoIndex != null) {
+        // Change like photo
+        if (likedPhotoIndex != photoIndex) {
+          setLikedPhotoIndex(photoIndex)
+          if (photoIndex == 0) {
+            setFirstPhotoLikes(firstPhotoLikes + 1)
+            setSecondPhotoLikes(secondPhotoLikes - 1)
+          } else {
+            setFirstPhotoLikes(firstPhotoLikes - 1)
+            setSecondPhotoLikes(secondPhotoLikes + 1)
+          }
+        } 
+        // Dislike
+        else {
+          setLikedPhotoIndex(null)
+          if (photoIndex == 0) {
+            setFirstPhotoLikes(firstPhotoLikes - 1);
+          } else {
+            setSecondPhotoLikes(secondPhotoLikes - 1);
+          }
+          dispatch(likePost(updatedPost))
         }
-      } else {
-        setLikedPhotoIndex(photoIndex);
-        if (photoIndex === 0) {
+      } 
+      // Like
+      else {
+        setLikedPhotoIndex(photoIndex)
+        if (photoIndex == 0) {
           setFirstPhotoLikes(firstPhotoLikes + 1);
         } else {
           setSecondPhotoLikes(secondPhotoLikes + 1);
         }
+        dispatch(likePost(updatedPost))
       }
-      dispatch(likePost(post))
     } catch (error) {
       console.error(error)
     }

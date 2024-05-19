@@ -137,20 +137,20 @@ postController.put('/like/:postId/:photoIndex', verifyToken, async (req, res) =>
             if (likedPhotoIndex != photoIndex) {
                 post.likes.set(userId, photoIndex);
                 await post.save();
-                return res.status(200).json({ msg: 'Photo like changed successfully', post});
+                return res.status(200).json({post});
             } else {
                 await User.findByIdAndUpdate(userId, { $pull: { 'likedPosts': postId } });
 
                 post.likes.delete(userId);
                 await post.save();
-                return res.status(200).json({ msg: 'Photo like removed successfully', post});
+                return res.status(200).json({post});
             }
         } else {
             await User.findByIdAndUpdate(userId, { $addToSet: { 'likedPosts': postId } });
 
             post.likes.set(userId, photoIndex);
             await post.save();
-            return res.status(200).json({ msg: 'Photo liked successfully', post});
+            return res.status(200).json({post});
         }
     } catch (err) {
         return res.status(500).json(err.message);

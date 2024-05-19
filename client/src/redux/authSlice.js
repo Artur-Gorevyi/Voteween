@@ -35,10 +35,12 @@ export const authSlice = createSlice({
         likePost(state, action){
             if(state.user.likedPosts.some(post => post._id === action.payload._id)){
                 state.user.likedPosts = state.user.likedPosts.filter((post) => post._id !== action.payload._id)
+                console.log("Disliked post", state.user.likedPosts)
             } else {
                 state.user.likedPosts.push(action.payload)
+                console.log("Liked post", state.user.likedPosts)
             }
-        },
+          },
         updateUser(state, action){
             state.user = action.payload
         }
