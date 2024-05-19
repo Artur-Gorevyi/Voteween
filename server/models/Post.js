@@ -11,14 +11,19 @@ const PostSchema = new mongoose.Schema({
         required: true,
         min: 8
     },
-    photo: {
+    firstImg: {
         type: String,
-        default: ""
+        required: true
+    },
+    secondImg: {
+        type: String,
+        required: true
     },
     likes: {
-        type: [String],
-        default: []
-    },
+        type: Map,
+        of: Number,
+        default: {}
+    }
 }, {timestamps: true})
 
 module.exports = mongoose.model("Post", PostSchema)

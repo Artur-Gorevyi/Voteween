@@ -37,7 +37,7 @@ authController.post('/login', async(req, res) => {
         }
 
         const {password, ...others} = user._doc
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '5h'})
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '24h'})
 
         return res.status(200).json({others, token})
     } catch (err){

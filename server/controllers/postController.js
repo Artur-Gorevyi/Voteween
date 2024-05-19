@@ -17,6 +17,19 @@ postController.get('/find/userposts/:id', async(req, res) => {
     }
 })
 
+// get user likes
+postController.get('/find/userlikes/:userId', async(req, res) => {
+    try {
+        const currentUser = await User.findById(req.params.userId);
+    
+        const posts = await Post.find({ _id: { $in: currentUser.likedPosts } }).populate("user", "-password");
+    
+        res.status(200).json(posts);
+      } catch (err) {
+        res.status(500).json(err.message);
+      }
+})
+
 // get timeline posts
 postController.get('/timeline/posts', verifyToken, async(req, res) => {
     try {
@@ -86,8 +99,8 @@ postController.put('/:id', verifyToken, async(req, res) => {
 // delete
 postController.delete('/:id', verifyToken, async(req, res) => {
     try {
-        
         const post = await Post.findById(req.params.id).populate("user", "-password")
+
         if(!post){
             return res.status(500).json({msg: "No such post"})
         } else if(post.user._id.toString() !== req.user.id.toString()){
@@ -101,24 +114,43 @@ postController.delete('/:id', verifyToken, async(req, res) => {
     }
 })
 
-// like
-postController.put('/like/:id', verifyToken, async (req, res) => {
+// likes
+postController.put('/like/:postId/:photoIndex', verifyToken, async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
-        const user = await User.findById(req.user.id);
+        const photoIndex = parseInt(req.params.photoIndex);
+        const postId = req.params.postId
+        const post = await Post.findById(postId);
 
         if (!post) {
             return res.status(404).json({ msg: 'No such post' });
-        } else {
-            if (post.likes.includes(user._id)) {
-                await Post.findByIdAndUpdate(post._id, { $pull: { 'likes': user._id } });
-                await User.findByIdAndUpdate(user._id, { $pull: { 'likedPosts': post._id } });
-                return res.status(200).json({msg: "Successfully Disliked this post"});
+        }
+
+        const userId = req.user.id;
+
+        if (photoIndex != 0 && photoIndex != 1) {
+            return res.status(400).json({ msg: 'Invalid photo index' });
+        }
+
+        const likedPhotoIndex = post.likes.get(userId);
+
+        if (likedPhotoIndex != undefined) {
+            if (likedPhotoIndex != photoIndex) {
+                post.likes.set(userId, photoIndex);
+                await post.save();
+                return res.status(200).json({ msg: 'Photo like changed successfully', post});
             } else {
-                await Post.findByIdAndUpdate(post._id, { $addToSet: { 'likes': user._id } });
-                await User.findByIdAndUpdate(user._id, { $addToSet: { 'likedPosts': post._id } });
-                return res.status(200).json({msg: "Successfully Liked this post"});
+                await User.findByIdAndUpdate(userId, { $pull: { 'likedPosts': postId } });
+
+                post.likes.delete(userId);
+                await post.save();
+                return res.status(200).json({ msg: 'Photo like removed successfully', post});
             }
+        } else {
+            await User.findByIdAndUpdate(userId, { $addToSet: { 'likedPosts': postId } });
+
+            post.likes.set(userId, photoIndex);
+            await post.save();
+            return res.status(200).json({ msg: 'Photo liked successfully', post});
         }
     } catch (err) {
         return res.status(500).json(err.message);

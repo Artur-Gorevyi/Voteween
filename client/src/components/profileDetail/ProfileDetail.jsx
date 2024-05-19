@@ -11,6 +11,7 @@ import Post from 'components/post/Post'
 const ProfileDetail = () => {
   const [profile, setProfile] = useState('')
   const [profilePosts, setProfilePosts] = useState([])
+  const [likedPosts, setlikedPosts] = useState([])
   const {user, token} = useSelector((state) => state.auth)
   const [isFollowed, setIsFollowed] = useState(false)
   const [show, setShow] = useState('mypost')
@@ -53,6 +54,22 @@ const ProfileDetail = () => {
       }
     }
     fetchProfilePosts()
+  }, [id])
+
+  // fetch liked posts
+  useEffect(() => {
+    const fetchLikedPosts = async() => {
+      try {
+        const res = await fetch(`http://localhost:5000/post/find/userlikes/${id}`)
+
+        const data = await res.json()
+
+        setlikedPosts(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchLikedPosts()
   }, [id])
 
   // handle follow function
@@ -117,14 +134,14 @@ const ProfileDetail = () => {
         }
         {(show === 'mypost' && profilePosts?.length > 0) ?
         <div className={classes.bottom}>
-          {profilePosts?.map((post) => (
+          {profilePosts.map((post) => (
             <Post post={post} key={post._id}/>
           ))}
         </div>
         : show === 'mypost' ? <h2>Profile has no posts</h2> : ''}
-       {(show === 'liked' && user?.likedPosts?.length > 0) ?
+       {(show === 'liked' && likedPosts.length > 0) ?
         <div className={classes.bottom}>
-          {user?.likedPosts?.map((post) => (
+          {likedPosts.map((post) => (
             <Post post={post} key={post._id}/>
           ))}
         </div>

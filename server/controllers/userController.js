@@ -41,11 +41,10 @@ userController.get('/find/friends', verifyToken, async(req, res) => {
     }
 })
 
-
 // get one
 userController.get('/find/:userId', verifyToken, async(req, res) => {
    try {
-    const user = await User.findById(req.params.userId)
+    const user = await User.findById(req.params.userId).populate("likedPosts")
 
     if(!user){
         return res.status(500).json({msg: "No such user, wrong id!"})
@@ -58,6 +57,7 @@ userController.get('/find/:userId', verifyToken, async(req, res) => {
     return res.status(500).json(error.message)
    }
 })
+
 // get all
 userController.get('/findAll', async(req, res) => {
     try {
@@ -72,6 +72,7 @@ userController.get('/findAll', async(req, res) => {
         return res.status(500).json(error.message) 
     }
 })
+
 // update
 userController.put('/updateUser/:userId', verifyToken, async(req, res) => {
     if(req.params.userId.toString() === req.user.id.toString()){
@@ -90,6 +91,7 @@ userController.put('/updateUser/:userId', verifyToken, async(req, res) => {
         return res.status(403).json({msg: "You can change only your own profile!"})
     }
 })
+
 // delete
 userController.delete('/deleteUser/:userId', verifyToken, async(req, res) => {
     if(req.params.userId === req.user.id){
@@ -103,6 +105,7 @@ userController.delete('/deleteUser/:userId', verifyToken, async(req, res) => {
         return res.status(403).json({msg: "You can delete only your own profile!"})
     }
 })
+
 // follow/unfollow
 userController.put('/toggleFollow/:otherUserId', verifyToken, async(req, res) => {
     try {

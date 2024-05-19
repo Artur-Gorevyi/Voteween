@@ -19,9 +19,28 @@ const Post = ({ post }) => {
   const [commentText, setCommentText] = useState('')
   const [isCommentEmpty, setIsCommentEmpty] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [isLiked, setIsLiked] = useState(user?.likedPosts?.some(likedPost => likedPost._id === post._id))
   const [showComment, setShowComment] = useState(false)
   const dispatch = useDispatch()
+
+  const [likedPhotoIndex, setLikedPhotoIndex] = useState(null);
+
+  const [firstPhotoLikes, setFirstPhotoLikes] = useState(0);
+  const [secondPhotoLikes, setSecondPhotoLikes] = useState(0);
+  
+  useEffect(() => {
+    const initialLikedPhotoIndex = post.likes[user._id];
+    setLikedPhotoIndex(initialLikedPhotoIndex);
+  }, [post, user._id]);
+
+  console.log(post.likes)
+
+  useEffect(() => {
+    const likesArray = Object.values(post.likes);
+    const firstPhotoLikes = likesArray.filter(like => like === 0).length;
+    const secondPhotoLikes = likesArray.filter(like => like === 1).length;
+    setFirstPhotoLikes(firstPhotoLikes);
+    setSecondPhotoLikes(secondPhotoLikes);
+  }, [post]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -55,16 +74,31 @@ const Post = ({ post }) => {
     }
   }
 
-  const handleLikePost = async () => {
+  const handleLikePost = async(photoIndex) => {
     try {
-      await fetch(`http://localhost:5000/post/like/${post._id}`, {
+      await fetch(`http://localhost:5000/post/like/${post._id}/${photoIndex}`, {
         headers: {
           "Authorization": `Bearer ${token}`
+          
         },
         method: "PUT"
       })
+      if (likedPhotoIndex === photoIndex) {
+        setLikedPhotoIndex(null);
+        if (photoIndex === 0) {
+          setFirstPhotoLikes(firstPhotoLikes - 1);
+        } else {
+          setSecondPhotoLikes(secondPhotoLikes - 1);
+        }
+      } else {
+        setLikedPhotoIndex(photoIndex);
+        if (photoIndex === 0) {
+          setFirstPhotoLikes(firstPhotoLikes + 1);
+        } else {
+          setSecondPhotoLikes(secondPhotoLikes + 1);
+        }
+      }
       dispatch(likePost(post))
-      setIsLiked(prev => !prev)
     } catch (error) {
       console.error(error)
     }
@@ -128,17 +162,25 @@ const Post = ({ post }) => {
         </div>
         <div className={classes.center}>
           <div className={classes.desc}>{post.desc}</div>
-          <Link to={`/postDetail/${post._id}`} className={classes.postImg}>
-          <img src={post?.photo ? `http://localhost:5000/images/${post?.photo}` : man} />
-          </Link>
+          <div className={classes.postImgs}>
+            <div className={classes.postImg}>
+                <img src={post?.firstImg ? `http://localhost:5000/images/${post?.firstImg}` : ''} />
+                <div className={classes.likeBtn}>
+                {likedPhotoIndex === 0 ? <AiFillHeart onClick={() => handleLikePost(0)} /> : <AiOutlineHeart onClick={() => handleLikePost(0)} />}
+                </div>
+                <p>{firstPhotoLikes}</p>
+            </div>
+            <div className={classes.postImg}>
+                <img src={post?.secondImg ? `http://localhost:5000/images/${post?.secondImg}` : ''} />
+                <div className={classes.likeBtn}>
+                {likedPhotoIndex === 1 ? <AiFillHeart onClick={() => handleLikePost(1)} /> : <AiOutlineHeart onClick={() => handleLikePost(1)} />}
+                </div>
+                <p>{secondPhotoLikes}</p>
+            </div>
+          </div>
         </div>
         <div className={`${classes.controls} ${showComment && classes.showComment}`}>
           <div className={classes.controlsLeft}>
-            {
-              isLiked
-                ? <AiFillHeart onClick={handleLikePost} />
-                : <AiOutlineHeart onClick={handleLikePost} />
-            }
             <BiMessageRounded onClick={() => setShowComment(prev => !prev)} />
           </div>
         </div>
