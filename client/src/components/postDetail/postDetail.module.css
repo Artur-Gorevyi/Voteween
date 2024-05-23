@@ -4,7 +4,7 @@
 }
 
 .wrapper{
-    width: 75%;
+    width: 85%;
     height: 90%;
     margin: 0 auto;
     margin-top: 1.5rem;
@@ -13,16 +13,30 @@
 }
 
 .left{
-    flex: 1;
+    flex: 2;
     height: 100%;
-    background-color: black;
+    background-color: #ffffff;
 }
 
-.left > img{
-    height: 100%;
+.left > .postImgs{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.left > .postImgs > .postImg {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
     width: 100%;
-    object-fit: cover;
-    opacity: 0.95;
+}
+
+
+.left > .postImgs > .postImg img {
+    max-width: 95%;
+    max-height: 95%;
 }
 
 .right{

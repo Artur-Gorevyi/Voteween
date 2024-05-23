@@ -86,7 +86,14 @@ const PostDetails = () => {
     <div className={classes.container}>
       <div className={classes.wrapper}>
         <div className={classes.left}>
-          <img src={post?.photo && `http://localhost:5000/images/${post?.photo}`} />
+          <div className={classes.postImgs}>
+            <div className={classes.postImg}>
+              <img src={post?.firstImg ? `http://localhost:5000/images/${post?.firstImg}` : ''} />
+            </div>
+            <div className={classes.postImg}>
+              <img src={post?.secondImg ? `http://localhost:5000/images/${post?.secondImg}` : ''} />
+            </div>
+          </div>
         </div>
         <div className={classes.right}>
           <div className={classes.wrapperTopSide}>

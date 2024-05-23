@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { useSelector } from 'react-redux'
 import { format } from 'timeago.js'
-import man from '../../assets/man2.jpg'
+import man from '../../assets/man.jpg'
 import { capitalizeFirstLetter } from '../../util/capitalizeFirstLetter'
 import classes from './comment.module.css'
 

@@ -181,14 +181,18 @@ const Post = ({ post }) => {
           <div className={classes.desc}>{post.desc}</div>
           <div className={classes.postImgs}>
             <div className={classes.postImg}>
-                <img src={post?.firstImg ? `http://localhost:5000/images/${post?.firstImg}` : ''} />
+                <Link to={`/postDetail/${post._id}`} className={classes.postImg}>
+                  <img src={post?.firstImg ? `http://localhost:5000/images/${post?.firstImg}` : ''} />
+                </Link>
                 <div className={classes.likeBtn}>
                 {likedPhotoIndex === 0 ? <AiFillHeart onClick={() => handleLikePost(0)} /> : <AiOutlineHeart onClick={() => handleLikePost(0)} />}
                 </div>
                 <p>{firstPhotoLikes}</p>
             </div>
             <div className={classes.postImg}>
-                <img src={post?.secondImg ? `http://localhost:5000/images/${post?.secondImg}` : ''} />
+                <Link to={`/postDetail/${post._id}`} className={classes.postImg}>
+                  <img src={post?.secondImg ? `http://localhost:5000/images/${post?.secondImg}` : ''} />
+                </Link>
                 <div className={classes.likeBtn}>
                 {likedPhotoIndex === 1 ? <AiFillHeart onClick={() => handleLikePost(1)} /> : <AiOutlineHeart onClick={() => handleLikePost(1)} />}
                 </div>
